@@ -64,21 +64,31 @@ CWARNS= $(CWARNSCPP) $(CWARNSC) $(CWARNGCC)
 
 LOCAL = $(TESTS) $(CWARNS)
 
-
 # enable Linux goodies
-MYCFLAGS= $(LOCAL) -std=c99 -DLUA_USE_LINUX -DLUA_USE_READLINE
-MYLDFLAGS= $(LOCAL) -Wl,-E
-MYLIBS= -ldl -lreadline
+MYCFLAGS  = $(LOCAL) -DLUA_USE_LINUX -DLUA_USE_READLINE
+MYLIBS    = -ldl -lreadline
+MYLDFLAGS = $(LOCAL) -Wl,-E
+RM        = rm -f
+BD        = cmp/$(GWC_ARCH)
 
+ifdef GWC_ARCH
+# Our custom setting when running under cshell
+ifeq ($(GWC_ARCH),ARM_V3)
+MYCFLAGS = $(LOCAL) -DLUA_USE_LINUX  -Wno-redundant-decls
+MYLIBS   = -ldl
+endif
+CFLAGS  += $(MYCFLAGS)
+AR      += rc
+else
+# Default settings From the project
+CC     = gcc
+CFLAGS = -Wall -O2 $(MYCFLAGS) -fno-stack-protector -fno-common -march=native -std=c99
+AR     = ar rc
+RANLIB = ranlib
+STRIP  = strip
+endif
 
-CC= gcc
-CFLAGS= -Wall -O2 $(MYCFLAGS) -fno-stack-protector -fno-common -march=native
-AR= ar rc
-RANLIB= ranlib
-RM= rm -f
-
-
-
+$(shell mkdir -p "$(BD)")
 # == END OF USER SETTINGS. NO NEED TO CHANGE ANYTHING BELOW THIS LINE =========
 
 
@@ -107,16 +117,19 @@ o:	$(ALL_O)
 
 a:	$(ALL_A)
 
+%.o: %.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $(BD)/$@ $<
+
 $(CORE_T): $(CORE_O) $(AUX_O) $(LIB_O)
-	$(AR) $@ $?
-	$(RANLIB) $@
+	$(AR) $(BD)/$@ $(addprefix $(BD)/, $?)
+	$(RANLIB) $(BD)/$@
 
 $(LUA_T): $(LUA_O) $(CORE_T)
-	$(CC) -o $@ $(MYLDFLAGS) $(LUA_O) $(CORE_T) $(LIBS) $(MYLIBS) $(DL)
-
+	$(CC) -o $(BD)/$@ $(MYLDFLAGS) $(addprefix $(BD)/, $(LUA_O) $(CORE_T)) $(LIBS) $(MYLIBS) $(DL)
+	$(STRIP) $(BD)/$@
 
 clean:
-	$(RM) $(ALL_T) $(ALL_O)
+	$(RM) $(addprefix $(BD)/,$(ALL_T) $(ALL_O))
 
 depend:
 	@$(CC) $(CFLAGS) -MM *.c
@@ -131,6 +144,7 @@ echo:
 	@echo "MYLDFLAGS = $(MYLDFLAGS)"
 	@echo "MYLIBS = $(MYLIBS)"
 	@echo "DL = $(DL)"
+	@echo "BD = $(BD)"
 
 $(ALL_O): makefile ltests.h
 

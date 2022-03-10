@@ -10,7 +10,7 @@
 
 #include <limits.h>
 #include <stddef.h>
-
+#include <pthread.h>
 
 #include "lua.h"
 
@@ -248,8 +248,10 @@ typedef l_uint32 Instruction;
 ** ('lua_lock') and leaves the core ('lua_unlock')
 */
 #if !defined(lua_lock)
-#define lua_lock(L)	((void) 0)
-#define lua_unlock(L)	((void) 0)
+extern pthread_mutex_t global_mtx;
+#include <stdio.h>
+#define lua_lock(L)	    pthread_mutex_lock(&global_mtx);
+#define lua_unlock(L)	  pthread_mutex_unlock(&global_mtx);
 #endif
 
 /*

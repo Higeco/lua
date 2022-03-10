@@ -250,8 +250,8 @@ typedef l_uint32 Instruction;
 #if !defined(lua_lock)
 extern pthread_mutex_t global_mtx;
 #include <stdio.h>
-#define lua_lock(L)	    pthread_mutex_lock(&global_mtx);
-#define lua_unlock(L)	  pthread_mutex_unlock(&global_mtx);
+#define lua_lock(L)     pthread_mutex_lock(&global_mtx);
+#define lua_unlock(L)   pthread_mutex_unlock(&global_mtx);
 #endif
 
 /*

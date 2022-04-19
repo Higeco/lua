@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <pthread.h>
 #include <signal.h>
 
 #include "lua.h"
@@ -35,7 +35,7 @@
 static lua_State *globalL = NULL;
 
 static const char *progname = LUA_PROGNAME;
-
+pthread_mutex_t global_mtx  = PTHREAD_MUTEX_INITIALIZER;
 
 #if defined(LUA_USE_POSIX)   /* { */
 

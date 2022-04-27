@@ -224,23 +224,19 @@
 #define LUA_CDIR	LUA_ROOT "lib/lua/" LUA_VDIR "/"
 #define HIG_LDIR	HIG_ROOT "share/lua/" LUA_VDIR "/"
 #define HIG_CDIR	HIG_ROOT "lib/lua/" LUA_VDIR "/"
-#define HIG_LOLD	HIG_ROLD "share/lua/" LUA_VDIR "/"
-#define HIG_COLD	HIG_ROLD "lib/lua/" LUA_VDIR "/"
 
 #define LUA_PATH_DEFAULT  \
 		LUA_LDIR"?.lua;"  LUA_LDIR"?/init.lua;" \
 		LUA_CDIR"?.lua;"  LUA_CDIR"?/init.lua;" \
 		HIG_LDIR"?.lua;"  HIG_LDIR"?/init.lua;" \
 		HIG_CDIR"?.lua;"  HIG_CDIR"?/init.lua;" \
-		HIG_LOLD"?.lua;"  HIG_LOLD"?/init.lua;" \
-		HIG_COLD"?.lua;"  HIG_COLD"?/init.lua;" \
-		"./?.lua;" "./?/init.lua"
+		"./?.lua;" "./?/init.lua;"
 
 #if !defined(LUA_CPATH_DEFAULT)
 #define LUA_CPATH_DEFAULT \
-		LUA_CDIR"?.so;" LUA_CDIR"loadall.so;" "./?.so" \
-		HIG_CDIR"?.so;"  HIG_CDIR"?/init.so;" \
-		HIG_COLD"?.so;"  HIG_COLD"?/init.so;"
+		LUA_CDIR"?.so;" LUA_CDIR"loadall.so;" \
+		HIG_CDIR"?.so;" HIG_CDIR"?/init.so;" \
+		"./?.so;"
 #endif
 
 #endif			/* } */
